@@ -19,7 +19,7 @@ namespace abc_bank
 
         public DateTime Now()
         {
-            return DateTime.Now;
+            return DateTime.Now.Date;
         }
     }
 }

@@ -8,14 +8,14 @@ namespace abc_bank_tests
     public class BankTest
     {
 
-        private static readonly double DOUBLE_DELTA = 1e-15;
+        private static readonly double DOUBLE_DELTA = 1e-4;
 
         [TestMethod]
         public void CustomerSummary() 
         {
             Bank bank = new Bank();
             Customer john = new Customer("John");
-            john.OpenAccount(new Account(Account.CHECKING));
+            john.OpenAccount(new Account(AccountType.CHECKING));
             bank.AddCustomer(john);
 
             Assert.AreEqual("Customer Summary\n - John (1 account)", bank.CustomerSummary());
@@ -24,11 +24,12 @@ namespace abc_bank_tests
         [TestMethod]
         public void CheckingAccount() {
             Bank bank = new Bank();
-            Account checkingAccount = new Account(Account.CHECKING);
+            Account checkingAccount = new Account(AccountType.CHECKING);
             Customer bill = new Customer("Bill").OpenAccount(checkingAccount);
             bank.AddCustomer(bill);
 
-            checkingAccount.Deposit(100.0);
+            DateTime depositDate = DateTime.Now.Date.Subtract(new TimeSpan(365, 0, 0, 0));
+            checkingAccount.Deposit(100.0, depositDate);
 
             Assert.AreEqual(0.1, bank.totalInterestPaid(), DOUBLE_DELTA);
         }
@@ -36,23 +37,25 @@ namespace abc_bank_tests
         [TestMethod]
         public void Savings_account() {
             Bank bank = new Bank();
-            Account checkingAccount = new Account(Account.SAVINGS);
-            bank.AddCustomer(new Customer("Bill").OpenAccount(checkingAccount));
+            Account savingsAccount = new Account(AccountType.SAVINGS);
+            bank.AddCustomer(new Customer("Bill").OpenAccount(savingsAccount));
 
-            checkingAccount.Deposit(1500.0);
+            DateTime depositDate = DateTime.Now.Date.Subtract(new TimeSpan(365, 0, 0, 0));
+            savingsAccount.Deposit(1500.0, depositDate);
 
-            Assert.AreEqual(2.0, bank.totalInterestPaid(), DOUBLE_DELTA);
+            Assert.AreEqual(2.0015, bank.totalInterestPaid(), DOUBLE_DELTA);
         }
 
         [TestMethod]
         public void Maxi_savings_account() {
             Bank bank = new Bank();
-            Account checkingAccount = new Account(Account.MAXI_SAVINGS);
-            bank.AddCustomer(new Customer("Bill").OpenAccount(checkingAccount));
+            Account maxiSavingsAccount = new Account(AccountType.MAXI_SAVINGS);
+            bank.AddCustomer(new Customer("Bill").OpenAccount(maxiSavingsAccount));
 
-            checkingAccount.Deposit(3000.0);
+            DateTime depositDate = DateTime.Now.Date.Subtract(new TimeSpan(365, 0, 0, 0));
+            maxiSavingsAccount.Deposit(3000.0, depositDate);
 
-            Assert.AreEqual(170.0, bank.totalInterestPaid(), DOUBLE_DELTA);
+            Assert.AreEqual(176.624, bank.totalInterestPaid(), DOUBLE_DELTA);
         }
     }
 }
